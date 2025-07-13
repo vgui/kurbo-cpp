@@ -1,6 +1,8 @@
 #include "kurbo/circle.hpp"
+#include "kurbo/ellipse.hpp"
 #include "kurbo/inline_methods.hpp"
 #include <cmath>
+#include <algorithm>
 
 namespace kurbo {
 
@@ -23,10 +25,14 @@ double Circle::perimeter(double accuracy) const {
 }
 
 int Circle::winding(const Point& pt) const {
-    if ((pt - center).hypot2() < radius * radius) {
+    double dist_sq = (pt - center).hypot2();
+    double radius_sq = radius * radius;
+    
+    // Point is inside (strictly less than radius)
+    if (dist_sq < radius_sq - 1e-12) {
         return 1;
     } else {
-        return 0;
+        return 0; // Point is on boundary or outside
     }
 }
 
@@ -59,6 +65,25 @@ Circle& Circle::operator-=(const Vec2& v) {
 
 Circle Circle::zero() {
     return Circle(Point::zero(), 0.0);
+}
+
+bool operator==(const Circle& a, const Circle& b) {
+    return a.center == b.center && a.radius == b.radius;
+}
+
+Ellipse operator*(const Affine& affine, const Circle& circle) {
+    // Transform the center
+    Point transformed_center = affine * circle.center;
+    
+    // Get the transformation matrix coefficients
+    auto coeffs = affine.as_coeffs();
+    double xx = coeffs[0], xy = coeffs[1], yx = coeffs[2], yy = coeffs[3];
+    
+    // Compute scale factors from the transformation matrix
+    double scale_x = std::sqrt(xx * xx + yx * yx);
+    double scale_y = std::sqrt(xy * xy + yy * yy);
+    
+    return Ellipse(transformed_center, Vec2(circle.radius * scale_x, circle.radius * scale_y), 0.0);
 }
 
 // CircleSegment implementation
@@ -152,6 +177,48 @@ CircleSegment& CircleSegment::operator-=(const Vec2& v) {
 
 CircleSegment CircleSegment::zero() {
     return CircleSegment(Point::zero(), 0.0, 0.0, 0.0, 0.0);
+}
+
+// Shape implementation for Circle
+std::vector<PathEl> Circle::path_elements(double tolerance) const {
+    // Approximate circle with cubic Bézier curves
+    // For a circle, we use 4 cubic Bézier curves
+    const double k = 0.5522848; // Magic number for circle approximation
+    double r = radius;
+    
+    std::vector<PathEl> elements;
+    elements.push_back(PathEl(PathElType::MoveTo, Point(center.x + r, center.y)));
+    
+    // Top right quadrant
+    elements.push_back(PathEl(PathElType::CurveTo,
+        Point(center.x + r, center.y + k * r),
+        Point(center.x + k * r, center.y + r),
+        Point(center.x, center.y + r)
+    ));
+    
+    // Top left quadrant
+    elements.push_back(PathEl(PathElType::CurveTo,
+        Point(center.x - k * r, center.y + r),
+        Point(center.x - r, center.y + k * r),
+        Point(center.x - r, center.y)
+    ));
+    
+    // Bottom left quadrant
+    elements.push_back(PathEl(PathElType::CurveTo,
+        Point(center.x - r, center.y - k * r),
+        Point(center.x - k * r, center.y - r),
+        Point(center.x, center.y - r)
+    ));
+    
+    // Bottom right quadrant
+    elements.push_back(PathEl(PathElType::CurveTo,
+        Point(center.x + k * r, center.y - r),
+        Point(center.x + r, center.y - k * r),
+        Point(center.x + r, center.y)
+    ));
+    
+    elements.push_back(PathEl(PathElType::ClosePath));
+    return elements;
 }
 
 } // namespace kurbo 

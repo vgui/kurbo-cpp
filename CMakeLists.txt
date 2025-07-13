@@ -35,6 +35,7 @@ set(KURBO_SOURCES
     src/kurbo/bezpath.cpp
     src/kurbo/quadbez.cpp
     src/kurbo/quadspline.cpp
+    src/kurbo/shape.cpp
 )
 
 add_library(kurbo STATIC ${KURBO_SOURCES})
@@ -68,6 +69,7 @@ add_executable(kurbo_tests
     tests/test_rect.cpp
     tests/test_rounded_rect.cpp
     tests/test_rounded_rect_radii.cpp
+    tests/test_shape.cpp
     tests/test_size.cpp
     tests/test_translate_scale.cpp
     tests/test_triangle.cpp
@@ -99,6 +101,7 @@ add_test(NAME QuadBezTests COMMAND kurbo_tests --gtest_filter=QuadBezTest*)
 add_test(NAME PathElTests COMMAND kurbo_tests --gtest_filter=PathElTest*)
 add_test(NAME CubicBezTests COMMAND kurbo_tests --gtest_filter=CubicBezTest*)
 add_test(NAME ArcTests COMMAND kurbo_tests --gtest_filter=ArcTest*)
+add_test(NAME ShapeTests COMMAND kurbo_tests --gtest_filter=ShapeTest*)
 
 # Create examples directory if it doesn't exist
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
@@ -176,6 +179,10 @@ target_link_libraries(example_cubicbez kurbo)
 # Example: BezPath operations
 add_executable(example_bezpath examples/bezpath_example.cpp)
 target_link_libraries(example_bezpath kurbo)
+
+# Example: Shape operations
+add_executable(example_shape examples/shape_example.cpp)
+target_link_libraries(example_shape kurbo)
 
 # Install rules
 install(TARGETS kurbo

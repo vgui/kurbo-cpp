@@ -1,6 +1,8 @@
 #include "kurbo/rect.hpp"
+#include "kurbo/affine.hpp"
 #include "kurbo/rounded_rect.hpp"
 #include "kurbo/inline_methods.hpp"
+#include <algorithm>
 #include <cmath>
 
 namespace kurbo {
@@ -228,6 +230,56 @@ Rect Rect::zero() {
 std::ostream& operator<<(std::ostream& os, const Rect& rect) {
     os << "Rect(" << rect.x0 << ", " << rect.y0 << ", " << rect.x1 << ", " << rect.y1 << ")";
     return os;
+}
+
+bool operator==(const Rect& a, const Rect& b) {
+    return a.x0 == b.x0 && a.y0 == b.y0 && a.x1 == b.x1 && a.y1 == b.y1;
+}
+
+Rect operator*(const Affine& affine, const Rect& rect) {
+    // Transform the four corners of the rectangle
+    Point p0 = affine * Point(rect.x0, rect.y0);
+    Point p1 = affine * Point(rect.x1, rect.y0);
+    Point p2 = affine * Point(rect.x1, rect.y1);
+    Point p3 = affine * Point(rect.x0, rect.y1);
+    
+    // Find the bounding box of the transformed corners
+    double min_x = std::min(std::min(p0.x, p1.x), std::min(p2.x, p3.x));
+    double max_x = std::max(std::max(p0.x, p1.x), std::max(p2.x, p3.x));
+    double min_y = std::min(std::min(p0.y, p1.y), std::min(p2.y, p3.y));
+    double max_y = std::max(std::max(p0.y, p1.y), std::max(p2.y, p3.y));
+    
+    return Rect(min_x, min_y, max_x, max_y);
+}
+
+// Shape implementation
+std::vector<PathEl> Rect::path_elements(double tolerance) const {
+    return {
+        PathEl(PathElType::MoveTo, Point(x0, y0)),
+        PathEl(PathElType::LineTo, Point(x1, y0)),
+        PathEl(PathElType::LineTo, Point(x1, y1)),
+        PathEl(PathElType::LineTo, Point(x0, y1)),
+        PathEl(PathElType::ClosePath)
+    };
+}
+
+double Rect::perimeter(double accuracy) const {
+    return 2.0 * (width() + height());
+}
+
+int Rect::winding(const Point& pt) const {
+    if (contains(pt)) {
+        return 1;
+    }
+    return 0;
+}
+
+Rect Rect::bounding_box() const {
+    return *this;
+}
+
+std::optional<Rect> Rect::as_rect() const {
+    return *this;
 }
 
 } // namespace kurbo 

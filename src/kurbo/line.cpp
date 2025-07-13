@@ -192,13 +192,7 @@ ConstPoint ConstPoint::zero() {
 }
 
 int Line::winding(const Point& pt) const {
-    // Simple winding: +1 if crosses upward, -1 if downward, 0 otherwise
-    if ((p0.y <= pt.y && p1.y > pt.y) || (p1.y <= pt.y && p0.y > pt.y)) {
-        double x_int = p0.x + (pt.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y);
-        if (x_int > pt.x) {
-            return (p1.y > p0.y) ? 1 : -1;
-        }
-    }
+    // Lines have no winding number - they are not closed shapes
     return 0;
 }
 
@@ -208,6 +202,40 @@ Rect Line::bounding_box() const {
     double x1 = std::max(p0.x, p1.x);
     double y1 = std::max(p0.y, p1.y);
     return Rect(x0, y0, x1, y1);
+}
+
+// Shape implementation
+std::vector<PathEl> Line::path_elements(double tolerance) const {
+    return {PathEl(PathElType::MoveTo, p0), PathEl(PathElType::LineTo, p1)};
+}
+
+double Line::area() const {
+    // Lines have zero area
+    return 0.0;
+}
+
+double Line::perimeter(double accuracy) const {
+    return length();
+}
+
+std::optional<Line> Line::as_line() const {
+    return *this;
+}
+
+bool Line::contains(const Point& pt) const {
+    // Check if point is on the line segment
+    Vec2 line_vec = p1 - p0;
+    Vec2 point_vec = pt - p0;
+    
+    // Check if point is collinear with line
+    double cross_product = line_vec.cross(point_vec);
+    if (std::abs(cross_product) > 1e-12) {
+        return false; // Point is not on the line
+    }
+    
+    // Check if point is within the segment bounds
+    double t = point_vec.dot(line_vec) / line_vec.dot(line_vec);
+    return t >= 0.0 && t <= 1.0;
 }
 
 } // namespace kurbo 

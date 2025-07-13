@@ -81,9 +81,4 @@ TEST(PathElTest, AssignmentOperator) {
     EXPECT_EQ(copy.point, original.point);
     EXPECT_EQ(copy.point2, original.point2);
     EXPECT_EQ(copy.point3, original.point3);
-}
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 } 

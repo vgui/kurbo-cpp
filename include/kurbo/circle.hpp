@@ -10,6 +10,7 @@
 #include "vec2.hpp"
 #include "rect.hpp"
 #include "affine.hpp"
+#include "shape.hpp"
 #include <optional>
 #include <cmath>
 
@@ -17,7 +18,7 @@ namespace kurbo {
 
 class Ellipse; // Forward declaration
 
-class Circle {
+class Circle : public Shape {
 public:
     // The center
     Point center;
@@ -29,7 +30,7 @@ public:
     constexpr Circle(const Point& center, double radius) : center(center), radius(radius) {}
 
     // Static constructors
-    static constexpr Circle new_circle(const Point& center, double radius) { return Circle(center, radius); }
+    static Circle new_circle(const Point& center, double radius) { return Circle(center, radius); }
 
     // Basic operations
     // CircleSegment segment(double inner_radius, double start_angle, double sweep_angle) const; // TODO: implement when CircleSegment is ready
@@ -38,22 +39,22 @@ public:
     bool is_finite() const;
     bool is_nan() const;
 
-    // Shape methods
-    double area() const;
-    double perimeter(double accuracy) const;
-    int winding(const Point& pt) const;
-    Rect bounding_box() const;
-    std::optional<Circle> as_circle() const;
+    // Default
+    static Circle zero();
+
+    // Shape implementation
+    std::vector<PathEl> path_elements(double tolerance) const override;
+    double area() const override;
+    double perimeter(double accuracy) const override;
+    int winding(const Point& pt) const override;
+    Rect bounding_box() const override;
+    std::optional<Circle> as_circle() const override;
 
     // Operators
     Circle operator+(const Vec2& v) const;
     Circle& operator+=(const Vec2& v);
     Circle operator-(const Vec2& v) const;
     Circle& operator-=(const Vec2& v);
-    // Ellipse operator*(const Affine& affine) const; // Removed to avoid circular dependency
-
-    // Default
-    static Circle zero();
 };
 
 // A segment of a circle
@@ -85,7 +86,10 @@ public:
     bool is_finite() const;
     bool is_nan() const;
 
-    // Shape methods
+    // Default
+    static CircleSegment zero();
+
+    // Shape-like methods
     double area() const;
     double perimeter(double accuracy) const;
     int winding(const Point& pt) const;
@@ -96,9 +100,11 @@ public:
     CircleSegment& operator+=(const Vec2& v);
     CircleSegment operator-(const Vec2& v) const;
     CircleSegment& operator-=(const Vec2& v);
-
-    // Default
-    static CircleSegment zero();
 };
+
+bool operator==(const Circle& a, const Circle& b);
+
+// Affine transformation (returns Ellipse since affine transform of circle is ellipse)
+Ellipse operator*(const Affine& affine, const Circle& circle);
 
 } // namespace kurbo 

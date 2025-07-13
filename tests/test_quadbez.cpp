@@ -113,7 +113,7 @@ TEST(QuadBezTest, SignedArea) {
     QuadBez quad(p0, p1, p2);
     
     double area = quad.signed_area();
-    EXPECT_DOUBLE_EQ(area, -2.0 / 3.0); // As in reference Rust kurbo
+    EXPECT_NEAR(area, -2.0 / 3.0, 1e-15); // As in reference Rust kurbo
 }
 
 TEST(QuadBezTest, Nearest) {

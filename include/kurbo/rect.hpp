@@ -10,6 +10,7 @@
 #include "point.hpp"
 #include "size.hpp"
 #include "vec2.hpp"
+#include "shape.hpp"
 #include <cmath>
 
 namespace kurbo {
@@ -17,7 +18,7 @@ namespace kurbo {
 class RoundedRect;
 class RoundedRectRadii;
 
-class Rect {
+class Rect : public Shape {
 public:
     // The minimum x coordinate (left edge)
     double x0;
@@ -36,7 +37,7 @@ public:
     constexpr Rect(double x0, double y0, double x1, double y1) : x0(x0), y0(y0), x1(x1), y1(y1) {}
 
     // Static constructors
-    static constexpr Rect new_rect(double x0, double y0, double x1, double y1) {
+    static Rect new_rect(double x0, double y0, double x1, double y1) {
         return Rect(x0, y0, x1, y1);
     }
     static Rect from_points(const Point& p0, const Point& p1);
@@ -57,7 +58,6 @@ public:
     double max_y() const;
     Point origin() const;
     Size size() const;
-    double area() const;
     bool is_zero_area() const;
     Point center() const;
 
@@ -100,6 +100,14 @@ public:
     // Default
     static Rect zero();
 
+    // Shape implementation
+    std::vector<PathEl> path_elements(double tolerance) const override;
+    double area() const override;
+    double perimeter(double accuracy) const override;
+    int winding(const Point& pt) const override;
+    Rect bounding_box() const override;
+    std::optional<Rect> as_rect() const override;
+
     // Static methods
     static Rect invalid() { return Rect(std::numeric_limits<double>::quiet_NaN(), 
                                        std::numeric_limits<double>::quiet_NaN(),
@@ -109,5 +117,10 @@ public:
 
 // Stream operator
 std::ostream& operator<<(std::ostream& os, const Rect& rect);
+
+bool operator==(const Rect& a, const Rect& b);
+
+// Affine transformation
+Rect operator*(const Affine& affine, const Rect& rect);
 
 } // namespace kurbo 

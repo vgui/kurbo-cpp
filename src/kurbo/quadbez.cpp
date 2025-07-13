@@ -101,16 +101,11 @@ double QuadBez::arclen(double accuracy) const {
 }
 
 double QuadBez::signed_area() const {
-    // Approximate by flattening
-    double area = 0.0;
-    const int N = 20;
-    Point prev = p0;
-    for (int i = 1; i <= N; ++i) {
-        double t = double(i) / N;
-        Point curr = eval(t);
-        area += (prev.x * curr.y - curr.x * prev.y) * 0.5;
-        prev = curr;
-    }
+    // Exact formula for quadratic Bézier curve signed area
+    // From Rust kurbo: (p0.x * (2*p1.y + p2.y) + 2*p1.x * (p2.y - p0.y) - p2.x * (p0.y + 2*p1.y)) / 6
+    double area = (p0.x * (2.0 * p1.y + p2.y) + 
+                   2.0 * p1.x * (p2.y - p0.y) - 
+                   p2.x * (p0.y + 2.0 * p1.y)) / 6.0;
     return area;
 }
 

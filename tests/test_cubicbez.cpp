@@ -225,16 +225,19 @@ TEST(QuadSplineTest, FourPointsImplicitOnCurve) {
 // --- Rust-inspired tests for CubicBez ---
 
 TEST(CubicBezRust, ArcLength) {
-    CubicBez c(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    // y = x^2 curve from Rust test
+    CubicBez c(Point(0, 0), Point(1.0/3.0, 0), Point(2.0/3.0, 1.0/3.0), Point(1, 1));
     double len = c.arclen(1e-6);
     EXPECT_GT(len, 0.0);
-    EXPECT_NEAR(len, 4.436, 0.01); // Rust: approx 4.436
+    // Rust test expects true_arclen = 0.5 * sqrt(5) + 0.25 * ln(2 + sqrt(5)) ≈ 1.4789428575445974
+    EXPECT_NEAR(len, 1.4789428575445974, 0.01);
 }
 
 TEST(CubicBezRust, SignedArea) {
-    CubicBez c(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    // y = 1 - x^3 curve from Rust test
+    CubicBez c(Point(1, 0), Point(2.0/3.0, 1), Point(1.0/3.0, 1), Point(0, 1));
     double area = c.signed_area();
-    EXPECT_NEAR(area, 4.0, 0.1); // Rust: approx 4.0
+    EXPECT_NEAR(area, 0.75, 1e-12); // Rust test expects 0.75
 }
 
 TEST(CubicBezRust, SubdivideAndJoin) {

@@ -5,6 +5,30 @@
 
 namespace kurbo {
 
+// Helper function to count ray intersections for winding number calculation
+int ray_intersection_count(const Point& p1, const Point& p2, const Point& pt) {
+    // Cast a ray from pt to the right and check if it intersects the line segment p1-p2
+    
+    // Check if the line segment is horizontal
+    if (std::abs(p1.y - p2.y) < 1e-12) {
+        return 0; // Horizontal lines don't contribute to winding
+    }
+    
+    // Check if the ray intersects the line segment
+    if ((p1.y > pt.y && p2.y <= pt.y) || (p2.y > pt.y && p1.y <= pt.y)) {
+        // The ray might intersect this line segment
+        double t = (pt.y - p1.y) / (p2.y - p1.y);
+        double x_intersect = p1.x + t * (p2.x - p1.x);
+        
+        if (x_intersect > pt.x) {
+            // Ray intersects the line segment to the right of pt
+            return (p2.y > p1.y) ? 1 : -1;
+        }
+    }
+    
+    return 0;
+}
+
 // --- PathSeg methods ---
 
 PathEl PathSeg::as_path_el() const {
@@ -208,6 +232,7 @@ std::optional<PathSeg> BezPath::get_seg(size_t ix) const {
             }
             return PathSeg(Line(last_pt, start_pt));
         }
+        case PathElType::MoveTo:
         default:
             return std::nullopt;
     }
@@ -640,7 +665,10 @@ double BezPath::perimeter(double accuracy) const {
 }
 
 int BezPath::winding(const Point& pt) const {
-    int sum = 0;
+    // Simple winding algorithm for closed paths
+    // Cast a ray to the right and count intersections
+    
+    int winding = 0;
     Point last_pt;
     Point start_pt;
     bool have_subpath = false;
@@ -654,16 +682,16 @@ int BezPath::winding(const Point& pt) const {
                 break;
             case PathElType::LineTo: {
                 if (have_subpath) {
-                    Line line(last_pt, el.point);
-                    sum += line.winding(pt);
+                    // Check if ray from pt to right intersects this line segment
+                    winding += ray_intersection_count(last_pt, el.point, pt);
                 }
                 last_pt = el.point;
                 break;
             }
             case PathElType::ClosePath: {
                 if (have_subpath && last_pt != start_pt) {
-                    Line line(last_pt, start_pt);
-                    sum += line.winding(pt);
+                    // Check if ray from pt to right intersects this line segment
+                    winding += ray_intersection_count(last_pt, start_pt, pt);
                 }
                 have_subpath = false;
                 break;
@@ -673,7 +701,7 @@ int BezPath::winding(const Point& pt) const {
                 break;
         }
     }
-    return sum;
+    return winding;
 }
 
 Rect BezPath::bounding_box() const {
@@ -782,6 +810,15 @@ bool operator==(const BezPath& a, const BezPath& b) {
 
 bool operator!=(const BezPath& a, const BezPath& b) {
     return !(a == b);
+}
+
+// Shape implementation
+std::vector<PathEl> BezPath::path_elements(double tolerance) const {
+    return elements_;
+}
+
+std::optional<std::vector<PathEl>> BezPath::as_path_slice() const {
+    return elements_;
 }
 
 } // namespace kurbo 

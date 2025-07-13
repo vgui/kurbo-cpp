@@ -28,7 +28,9 @@
 #include "quadspline.hpp"
 #include "path_el.hpp"
 #include "bezpath.hpp"
-// #include "bezpath.hpp"
+
+// Shape interface
+#include "shape.hpp"
 
 // Transformations
 #include "affine.hpp"

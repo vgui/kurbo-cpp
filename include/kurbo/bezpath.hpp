@@ -13,6 +13,7 @@
 #include "cubicbez.hpp"
 #include "affine.hpp"
 #include "rect.hpp"
+#include "shape.hpp"
 #include <vector>
 #include <variant>
 #include <iterator>
@@ -72,7 +73,7 @@ public:
 };
 
 // BezPath: a sequence of PathEl
-class BezPath {
+class BezPath : public Shape {
 public:
     BezPath() = default;
     explicit BezPath(const std::vector<PathEl>& els) : elements_(els) {}
@@ -110,10 +111,10 @@ public:
     void flatten(double tolerance, std::vector<PathEl>& out) const;
 
     // Area, perimeter, winding, bounding box
-    double area() const;
-    double perimeter(double accuracy = 1e-9) const;
-    int winding(const Point& pt) const;
-    Rect bounding_box() const;
+    // double area() const;
+    // double perimeter(double accuracy = 1e-9) const;
+    // int winding(const Point& pt) const;
+    // Rect bounding_box() const;
 
     // Extend from another container
     template<typename InputIt>
@@ -130,6 +131,15 @@ public:
     // Into iterator
     std::vector<PathEl>::const_iterator begin() const { return elements_.begin(); }
     std::vector<PathEl>::const_iterator end() const { return elements_.end(); }
+
+    // Shape implementation
+    std::vector<PathEl> path_elements(double tolerance) const override;
+    double area() const override;
+    double perimeter(double accuracy) const override;
+    double perimeter() const { return perimeter(1e-9); } // Convenience overload
+    int winding(const Point& pt) const override;
+    Rect bounding_box() const override;
+    std::optional<std::vector<PathEl>> as_path_slice() const override;
 
     // Segments iterator
     class Segments {

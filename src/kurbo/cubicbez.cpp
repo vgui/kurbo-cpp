@@ -155,8 +155,24 @@ Rect CubicBez::bounding_box() const {
 }
 
 double CubicBez::arclen(double accuracy) const {
+    // Improved numerical integration using adaptive subdivision
+    // This is a simplified version of the Rust implementation
+    
+    // Calculate derivatives at control points
+    Vec2 d0 = 3.0 * (p1 - p0);
+    Vec2 d1 = 3.0 * (p2 - p1);
+    Vec2 d2 = 3.0 * (p3 - p2);
+    
+    // Estimate curvature and determine number of segments
+    Vec2 dd1 = d1 - d0;
+    Vec2 dd2 = d2 - d1;
+    double max_curvature = std::max(dd1.hypot(), dd2.hypot());
+    
+    // Adaptive subdivision based on curvature
+    int N = std::max(10, static_cast<int>(max_curvature / accuracy * 2.0));
+    N = std::min(N, 100); // Cap at reasonable number
+    
     double len = 0.0;
-    const int N = 40;
     Point prev = p0;
     for (int i = 1; i <= N; ++i) {
         double t = double(i) / N;
@@ -168,15 +184,12 @@ double CubicBez::arclen(double accuracy) const {
 }
 
 double CubicBez::signed_area() const {
-    double area = 0.0;
-    const int N = 40;
-    Point prev = p0;
-    for (int i = 1; i <= N; ++i) {
-        double t = double(i) / N;
-        Point curr = eval(t);
-        area += (prev.x * curr.y - curr.x * prev.y) * 0.5;
-        prev = curr;
-    }
+    // Exact formula for cubic Bézier curve signed area
+    // From Rust kurbo: (p0.x * (6*p1.y + 3*p2.y + p3.y) + 3*(p1.x * (-2*p0.y + p2.y + p3.y) - p2.x * (p0.y + p1.y - 2*p3.y)) - p3.x * (p0.y + 3*p1.y + 6*p2.y)) * (1/20)
+    double area = (p0.x * (6.0 * p1.y + 3.0 * p2.y + p3.y) + 
+                   3.0 * (p1.x * (-2.0 * p0.y + p2.y + p3.y) - 
+                          p2.x * (p0.y + p1.y - 2.0 * p3.y)) - 
+                   p3.x * (p0.y + 3.0 * p1.y + 6.0 * p2.y)) * (1.0 / 20.0);
     return area;
 }
 

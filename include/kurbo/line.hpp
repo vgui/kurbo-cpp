@@ -11,13 +11,14 @@
 #include "rect.hpp"
 #include "affine.hpp"
 #include "param_curve.hpp"
+#include "shape.hpp"
 #include <optional>
 #include <cmath>
 
 namespace kurbo {
 
 class Line : public ParamCurve, public ParamCurveDeriv, public ParamCurveArclen, 
-            public ParamCurveArea, public ParamCurveNearest, public ParamCurveExtrema {
+            public ParamCurveArea, public ParamCurveNearest, public ParamCurveExtrema, public Shape {
 public:
     // The line's start point
     Point p0;
@@ -40,8 +41,6 @@ public:
     // Utility methods
     bool is_finite() const;
     bool is_nan() const;
-    int winding(const Point& pt) const;
-    Rect bounding_box() const;
 
     // ParamCurve implementation
     Point eval(double t) const override;
@@ -79,6 +78,15 @@ public:
 
     // Default
     static Line zero();
+
+    // Shape implementation
+    std::vector<PathEl> path_elements(double tolerance) const override;
+    double area() const override;
+    double perimeter(double accuracy) const override;
+    int winding(const Point& pt) const override;
+    Rect bounding_box() const override;
+    std::optional<Line> as_line() const override;
+    bool contains(const Point& pt) const override;
 };
 
 // Stream operator
