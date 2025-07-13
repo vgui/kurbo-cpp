@@ -59,4 +59,7 @@ public:
     static RoundedRect zero();
 };
 
+// Stream operator
+std::ostream& operator<<(std::ostream& os, const RoundedRect& rr);
+
 } // namespace kurbo 

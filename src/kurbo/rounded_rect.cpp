@@ -97,4 +97,9 @@ RoundedRect RoundedRect::zero() {
     return RoundedRect(Rect::zero(), RoundedRectRadii(0.0));
 }
 
+std::ostream& operator<<(std::ostream& os, const RoundedRect& rr) {
+    os << "RoundedRect(rect=" << rr.rect << ", radii=" << rr.radii << ")";
+    return os;
+}
+
 } // namespace kurbo 

@@ -8,6 +8,7 @@
 
 #include <cmath>
 #include <optional>
+#include <ostream>
 
 namespace kurbo {
 
@@ -42,5 +43,8 @@ public:
     // Static constructors
     static RoundedRectRadii zero();
 };
+
+// Stream operator
+std::ostream& operator<<(std::ostream& os, const RoundedRectRadii& radii);
 
 } // namespace kurbo 

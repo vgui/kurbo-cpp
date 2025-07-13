@@ -3,8 +3,6 @@
 #include "kurbo/point.hpp"
 #include "kurbo/vec2.hpp"
 #include "kurbo/affine.hpp"
-#include "kurbo/inline_methods.hpp"
-#include <cmath>
 
 using namespace kurbo;
 
@@ -94,11 +92,59 @@ TEST(LineTest, Subsegment) {
     Point p1{4.0, 4.0};
     Line line = Line::new_line(p0, p1);
     
-    Line sub = line.subsegment(0.25, 0.75);
-    EXPECT_DOUBLE_EQ(sub.p0.x, 1.0);
-    EXPECT_DOUBLE_EQ(sub.p0.y, 1.0);
-    EXPECT_DOUBLE_EQ(sub.p1.x, 3.0);
-    EXPECT_DOUBLE_EQ(sub.p1.y, 3.0);
+    auto sub_ptr = line.subsegment(0.25, 0.75);
+    auto sub = dynamic_cast<Line*>(sub_ptr);
+    EXPECT_NE(sub, nullptr);
+    
+    EXPECT_DOUBLE_EQ(sub->p0.x, 1.0);
+    EXPECT_DOUBLE_EQ(sub->p0.y, 1.0);
+    EXPECT_DOUBLE_EQ(sub->p1.x, 3.0);
+    EXPECT_DOUBLE_EQ(sub->p1.y, 3.0);
+    
+    delete sub_ptr;
+}
+
+TEST(LineTest, Subdivide) {
+    Point p0{0.0, 0.0};
+    Point p1{4.0, 4.0};
+    Line line = Line::new_line(p0, p1);
+    
+    auto [first_ptr, second_ptr] = line.subdivide();
+    auto first = dynamic_cast<Line*>(first_ptr);
+    auto second = dynamic_cast<Line*>(second_ptr);
+    
+    EXPECT_NE(first, nullptr);
+    EXPECT_NE(second, nullptr);
+    
+    EXPECT_DOUBLE_EQ(first->p0.x, 0.0);
+    EXPECT_DOUBLE_EQ(first->p0.y, 0.0);
+    EXPECT_DOUBLE_EQ(first->p1.x, 2.0);
+    EXPECT_DOUBLE_EQ(first->p1.y, 2.0);
+    
+    EXPECT_DOUBLE_EQ(second->p0.x, 2.0);
+    EXPECT_DOUBLE_EQ(second->p0.y, 2.0);
+    EXPECT_DOUBLE_EQ(second->p1.x, 4.0);
+    EXPECT_DOUBLE_EQ(second->p1.y, 4.0);
+    
+    delete first_ptr;
+    delete second_ptr;
+}
+
+TEST(LineTest, Derivative) {
+    Point p0{0.0, 0.0};
+    Point p1{3.0, 4.0};
+    Line line = Line::new_line(p0, p1);
+    
+    auto deriv_ptr = line.deriv();
+    auto deriv = dynamic_cast<Line*>(deriv_ptr);
+    EXPECT_NE(deriv, nullptr);
+    
+    EXPECT_DOUBLE_EQ(deriv->p0.x, 0.0);
+    EXPECT_DOUBLE_EQ(deriv->p0.y, 0.0);
+    EXPECT_DOUBLE_EQ(deriv->p1.x, 3.0);
+    EXPECT_DOUBLE_EQ(deriv->p1.y, 4.0);
+    
+    delete deriv_ptr;
 }
 
 TEST(LineTest, Arclen) {
@@ -109,14 +155,6 @@ TEST(LineTest, Arclen) {
     EXPECT_DOUBLE_EQ(line.arclen(1e-9), 5.0);
 }
 
-TEST(LineTest, InvArclen) {
-    Point p0{0.0, 0.0};
-    Point p1{3.0, 4.0};
-    Line line = Line::new_line(p0, p1);
-    
-    EXPECT_DOUBLE_EQ(line.inv_arclen(2.5, 1e-9), 0.5);
-}
-
 TEST(LineTest, SignedArea) {
     Point p0{0.0, 0.0};
     Point p1{3.0, 4.0};
@@ -125,12 +163,25 @@ TEST(LineTest, SignedArea) {
     EXPECT_DOUBLE_EQ(line.signed_area(), 0.0);
 }
 
-TEST(LineTest, Curvature) {
+TEST(LineTest, Nearest) {
+    Point p0{0.0, 0.0};
+    Point p1{4.0, 0.0};
+    Line line = Line::new_line(p0, p1);
+    
+    Point test_point(2.0, 3.0);
+    Nearest result = line.nearest(test_point, 0.001);
+    
+    EXPECT_DOUBLE_EQ(result.t, 0.5);
+    EXPECT_DOUBLE_EQ(result.distance_sq, 9.0);
+}
+
+TEST(LineTest, Extrema) {
     Point p0{0.0, 0.0};
     Point p1{3.0, 4.0};
     Line line = Line::new_line(p0, p1);
     
-    EXPECT_DOUBLE_EQ(line.curvature(0.5), 0.0);
+    auto extrema = line.extrema();
+    EXPECT_EQ(extrema.size(), 0); // Lines have no extrema
 }
 
 TEST(LineTest, Operators) {

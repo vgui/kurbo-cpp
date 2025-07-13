@@ -10,12 +10,14 @@
 #include "vec2.hpp"
 #include "rect.hpp"
 #include "affine.hpp"
+#include "param_curve.hpp"
 #include <optional>
 #include <cmath>
 
 namespace kurbo {
 
-class Line {
+class Line : public ParamCurve, public ParamCurveDeriv, public ParamCurveArclen, 
+            public ParamCurveArea, public ParamCurveNearest, public ParamCurveExtrema {
 public:
     // The line's start point
     Point p0;
@@ -27,7 +29,7 @@ public:
     constexpr Line(const Point& p0, const Point& p1) : p0(p0), p1(p1) {}
 
     // Static constructors
-    static constexpr Line new_line(const Point& p0, const Point& p1) { return Line(p0, p1); }
+    static Line new_line(const Point& p0, const Point& p1) { return Line(p0, p1); }
 
     // Basic operations
     Line reversed() const;
@@ -39,15 +41,31 @@ public:
     bool is_finite() const;
     bool is_nan() const;
 
-    // Parametric curve methods
-    Point eval(double t) const;
-    Line subsegment(double start_t, double end_t) const;
-    Point start() const;
-    Point end() const;
-    double arclen(double accuracy) const;
-    double inv_arclen(double arclen, double accuracy) const;
-    double signed_area() const;
-    double curvature(double t) const;
+    // ParamCurve implementation
+    Point eval(double t) const override;
+    ParamCurve* subsegment(double start, double end) const override;
+    std::pair<ParamCurve*, ParamCurve*> subdivide() const override;
+    Point start() const override;
+    Point end() const override;
+
+    // ParamCurveDeriv implementation
+    ParamCurveDeriv* deriv() const override;
+
+    // ParamCurveArclen implementation
+    double arclen(double accuracy) const override;
+
+    // ParamCurveArea implementation
+    double signed_area() const override;
+
+    // ParamCurveNearest implementation
+    Nearest nearest(const Point& p, double accuracy) const override;
+
+    // ParamCurveExtrema implementation
+    std::vector<double> extrema() const override;
+
+    // Transformations
+    Line transform(const Affine& affine) const;
+    bool is_linear() const;
 
     // Operators
     Line operator+(const Vec2& v) const;
@@ -60,6 +78,9 @@ public:
     // Default
     static Line zero();
 };
+
+// Stream operator
+std::ostream& operator<<(std::ostream& os, const Line& line);
 
 // A trivial "curve" that is just a constant point
 class ConstPoint {

@@ -206,4 +206,14 @@ std::pair<Vec2, double> Affine::svd() const {
     return std::make_pair(scale, rotation);
 }
 
+std::ostream& operator<<(std::ostream& os, const Affine& affine) {
+    os << "Affine([";
+    for (size_t i = 0; i < 6; ++i) {
+        if (i > 0) os << ", ";
+        os << affine.coeffs[i];
+    }
+    os << "])";
+    return os;
+}
+
 } // namespace kurbo 

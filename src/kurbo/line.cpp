@@ -41,8 +41,15 @@ Point Line::eval(double t) const {
     return p0.lerp(p1, t);
 }
 
-Line Line::subsegment(double start_t, double end_t) const {
-    return Line(eval(start_t), eval(end_t));
+ParamCurve* Line::subsegment(double start, double end) const {
+    return new Line(eval(start), eval(end));
+}
+
+std::pair<ParamCurve*, ParamCurve*> Line::subdivide() const {
+    Point mid = midpoint();
+    auto first = new Line(p0, mid);
+    auto second = new Line(mid, p1);
+    return {first, second};
 }
 
 Point Line::start() const {
@@ -53,20 +60,37 @@ Point Line::end() const {
     return p1;
 }
 
-double Line::arclen(double accuracy) const {
-    return (p1 - p0).hypot();
+ParamCurveDeriv* Line::deriv() const {
+    // The derivative of a line is a constant vector
+    // We return a Line representing the derivative vector
+    Vec2 derivative = p1 - p0;
+    return new Line(Point(0, 0), Point(derivative.x, derivative.y));
 }
 
-double Line::inv_arclen(double arclen, double accuracy) const {
-    return arclen / (p1 - p0).hypot();
+double Line::arclen(double accuracy) const {
+    return (p1 - p0).hypot();
 }
 
 double Line::signed_area() const {
     return p0.to_vec2().cross(p1.to_vec2()) * 0.5;
 }
 
-double Line::curvature(double t) const {
-    return 0.0; // Lines have zero curvature
+Nearest Line::nearest(const Point& p, double accuracy) const {
+    Vec2 line_vec = p1 - p0;
+    Vec2 point_vec = p - p0;
+    
+    double t = point_vec.dot(line_vec) / line_vec.dot(line_vec);
+    t = std::max(0.0, std::min(1.0, t));
+    
+    Point nearest_pt = eval(t);
+    double distance_sq = p.distance_squared(nearest_pt);
+    
+    return {distance_sq, t};
+}
+
+std::vector<double> Line::extrema() const {
+    // Lines have no extrema in their interior
+    return {};
 }
 
 Line Line::operator+(const Vec2& v) const {
@@ -101,6 +125,19 @@ Line& Line::operator*=(const Affine& affine) {
 
 Line Line::zero() {
     return Line(Point::zero(), Point::zero());
+}
+
+Line Line::transform(const Affine& affine) const {
+    return Line(affine * p0, affine * p1);
+}
+
+bool Line::is_linear() const {
+    return true; // Lines are always linear
+}
+
+std::ostream& operator<<(std::ostream& os, const Line& line) {
+    os << "Line(" << line.p0 << ", " << line.p1 << ")";
+    return os;
 }
 
 // ConstPoint implementation

@@ -1,4 +1,5 @@
 #include "kurbo/rounded_rect_radii.hpp"
+#include <ostream>
 #include <cmath>
 
 namespace kurbo {
@@ -45,6 +46,11 @@ std::optional<double> RoundedRectRadii::as_single_radius() const {
 
 RoundedRectRadii RoundedRectRadii::zero() {
     return RoundedRectRadii(0.0);
+}
+
+std::ostream& operator<<(std::ostream& os, const RoundedRectRadii& radii) {
+    os << "RoundedRectRadii(" << radii.top_left << ", " << radii.top_right << ", " << radii.bottom_right << ", " << radii.bottom_left << ")";
+    return os;
 }
 
 } // namespace kurbo 

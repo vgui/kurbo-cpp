@@ -85,4 +85,7 @@ public:
     static Affine identity();
 };
 
+// Stream operator
+std::ostream& operator<<(std::ostream& os, const Affine& affine);
+
 } // namespace kurbo 

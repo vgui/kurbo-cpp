@@ -68,8 +68,10 @@ public:
 };
 
 /// A differentiable parameterized curve.
-class ParamCurveDeriv : public ParamCurve {
+class ParamCurveDeriv {
 public:
+    virtual ~ParamCurveDeriv() = default;
+
     /// The derivative of the curve.
     ///
     /// Note that the type of the return value is somewhat inaccurate, as
@@ -86,8 +88,10 @@ public:
 };
 
 /// A parameterized curve that can have its arc length measured.
-class ParamCurveArclen : public ParamCurve {
+class ParamCurveArclen {
 public:
+    virtual ~ParamCurveArclen() = default;
+
     /// The arc length of the curve.
     ///
     /// The result is accurate to the given accuracy (subject to
@@ -127,8 +131,10 @@ public:
 };
 
 /// A parameterized curve that reports the nearest point.
-class ParamCurveNearest : public ParamCurve {
+class ParamCurveNearest {
 public:
+    virtual ~ParamCurveNearest() = default;
+
     /// Find the position on the curve that is nearest to the given point.
     ///
     /// This returns a Nearest struct that contains information about
@@ -137,15 +143,19 @@ public:
 };
 
 /// A parameterized curve that reports its curvature.
-class ParamCurveCurvature : public ParamCurveDeriv {
+class ParamCurveCurvature {
 public:
+    virtual ~ParamCurveCurvature() = default;
+
     /// Compute the signed curvature at parameter t.
     virtual double curvature(double t) const;
 };
 
 /// A parameterized curve that reports its extrema.
-class ParamCurveExtrema : public ParamCurve {
+class ParamCurveExtrema {
 public:
+    virtual ~ParamCurveExtrema() = default;
+
     /// Compute the extrema of the curve.
     ///
     /// Only extrema within the interior of the curve count.

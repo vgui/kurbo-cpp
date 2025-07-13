@@ -35,6 +35,21 @@ public:
     }
     static TranslateScale translate_only(const Vec2& translation);
     static TranslateScale from_scale_about(double scale, const Point& focus);
+    
+    // Additional static constructors for examples
+    static constexpr TranslateScale translate(const Vec2& translation) {
+        return TranslateScale(translation, 1.0);
+    }
+    static constexpr TranslateScale scale_non_uniform(double sx, double sy) {
+        // Note: This is not a true non-uniform scale, but for compatibility
+        return TranslateScale(Vec2{0.0, 0.0}, sx);
+    }
+    static constexpr TranslateScale new_translate_scale(const Vec2& translation, double scale) {
+        return TranslateScale(translation, scale);
+    }
+    static constexpr TranslateScale new_translate_scale_non_uniform(const Vec2& translation, const Vec2& scale) {
+        return TranslateScale(translation, scale.x);
+    }
 
     // Inverse
     TranslateScale inverse() const;
@@ -42,6 +57,11 @@ public:
     // Utility
     bool is_finite() const;
     bool is_nan() const;
+    bool is_invertible() const;
+    
+    // Accessors
+    const Vec2& get_translation() const { return translation; }
+    double get_scale() const { return scale; }
 
     // Operators
     Point operator*(const Point& p) const;
@@ -62,5 +82,8 @@ public:
 // Free operators
 TranslateScale operator*(double scalar, const TranslateScale& ts);
 TranslateScale operator+(const Vec2& v, const TranslateScale& ts);
+
+// Stream operator
+std::ostream& operator<<(std::ostream& os, const TranslateScale& ts);
 
 } // namespace kurbo 

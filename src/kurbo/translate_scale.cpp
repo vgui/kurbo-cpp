@@ -27,6 +27,10 @@ bool TranslateScale::is_nan() const {
     return translation.is_nan() || std::isnan(scale);
 }
 
+bool TranslateScale::is_invertible() const {
+    return scale != 0.0 && std::isfinite(scale);
+}
+
 Point TranslateScale::operator*(const Point& p) const {
     return (scale * p.to_vec2()).to_point() + translation;
 }
@@ -73,6 +77,12 @@ TranslateScale operator*(double scalar, const TranslateScale& ts) {
 
 TranslateScale operator+(const Vec2& v, const TranslateScale& ts) {
     return ts + v;
+}
+
+// Stream operator
+std::ostream& operator<<(std::ostream& os, const TranslateScale& ts) {
+    os << "TranslateScale(translation=" << ts.translation << ", scale=" << ts.scale << ")";
+    return os;
 }
 
 } // namespace kurbo 

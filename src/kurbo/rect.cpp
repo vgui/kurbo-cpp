@@ -225,4 +225,9 @@ Rect Rect::zero() {
     return ZERO;
 }
 
+std::ostream& operator<<(std::ostream& os, const Rect& rect) {
+    os << "Rect(" << rect.x0 << ", " << rect.y0 << ", " << rect.x1 << ", " << rect.y1 << ")";
+    return os;
+}
+
 } // namespace kurbo 
