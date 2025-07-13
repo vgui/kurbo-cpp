@@ -140,6 +140,10 @@ std::ostream& operator<<(std::ostream& os, const Line& line) {
     return os;
 }
 
+bool operator==(const Line& a, const Line& b) {
+    return a.p0 == b.p0 && a.p1 == b.p1;
+}
+
 // ConstPoint implementation
 // Constructor is now inline in header
 
@@ -185,6 +189,25 @@ double ConstPoint::curvature(double t) const {
 
 ConstPoint ConstPoint::zero() {
     return ConstPoint(Point::zero());
+}
+
+int Line::winding(const Point& pt) const {
+    // Simple winding: +1 if crosses upward, -1 if downward, 0 otherwise
+    if ((p0.y <= pt.y && p1.y > pt.y) || (p1.y <= pt.y && p0.y > pt.y)) {
+        double x_int = p0.x + (pt.y - p0.y) * (p1.x - p0.x) / (p1.y - p0.y);
+        if (x_int > pt.x) {
+            return (p1.y > p0.y) ? 1 : -1;
+        }
+    }
+    return 0;
+}
+
+Rect Line::bounding_box() const {
+    double x0 = std::min(p0.x, p1.x);
+    double y0 = std::min(p0.y, p1.y);
+    double x1 = std::max(p0.x, p1.x);
+    double y1 = std::max(p0.y, p1.y);
+    return Rect(x0, y0, x1, y1);
 }
 
 } // namespace kurbo 

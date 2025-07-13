@@ -63,49 +63,55 @@ ParamCurveDeriv* QuadBez::deriv() const {
     );
 }
 
+int QuadBez::winding(const Point& pt) const {
+    // Approximate by flattening to lines
+    int sum = 0;
+    const int N = 10;
+    Point prev = p0;
+    for (int i = 1; i <= N; ++i) {
+        double t = double(i) / N;
+        Point curr = eval(t);
+        Line seg(prev, curr);
+        sum += seg.winding(pt);
+        prev = curr;
+    }
+    return sum;
+}
+
+Rect QuadBez::bounding_box() const {
+    double min_x = std::min({p0.x, p1.x, p2.x});
+    double min_y = std::min({p0.y, p1.y, p2.y});
+    double max_x = std::max({p0.x, p1.x, p2.x});
+    double max_y = std::max({p0.y, p1.y, p2.y});
+    return Rect(min_x, min_y, max_x, max_y);
+}
+
 double QuadBez::arclen(double accuracy) const {
-    Vec2 d2 = p0.to_vec2() - 2.0 * p1.to_vec2() + p2.to_vec2();
-    double a = d2.hypot2();
-    Vec2 d1 = p1 - p0;
-    double c = d1.hypot2();
-    
-    if (a < 5e-4 * c) {
-        // This case happens for nearly straight Béziers.
-        //
-        // Calculate arclength using Legendre-Gauss quadrature using formula from Behdad
-        // in https://github.com/Pomax/BezierInfo-2/issues/77
-        double v0 = (-0.492943519233745 * p0.to_vec2()
-            + 0.430331482911935 * p1.to_vec2()
-            + 0.0626120363218102 * p2.to_vec2()).hypot();
-        double v1 = ((p2 - p0) * 0.4444444444444444).hypot();
-        double v2 = (-0.0626120363218102 * p0.to_vec2()
-            - 0.430331482911935 * p1.to_vec2()
-            + 0.492943519233745 * p2.to_vec2()).hypot();
-        return v0 + v1 + v2;
+    // Approximate by flattening
+    double len = 0.0;
+    const int N = 20;
+    Point prev = p0;
+    for (int i = 1; i <= N; ++i) {
+        double t = double(i) / N;
+        Point curr = eval(t);
+        len += (curr - prev).hypot();
+        prev = curr;
     }
-    
-    double b = 2.0 * d2.dot(d1);
-    double sabc = std::sqrt(a + b + c);
-    double a2 = std::pow(a, -0.5);
-    double a32 = std::pow(a2, 3);
-    double c2 = 2.0 * std::sqrt(c);
-    double ba_c2 = b * a2 + c2;
-    
-    double v0 = 0.25 * a2 * a2 * b * (2.0 * sabc - c2) + sabc;
-    
-    // TODO: justify and fine-tune this exact constant.
-    if (ba_c2 < 1e-13) {
-        // This case happens for Béziers with a sharp kink.
-        return v0;
-    } else {
-        return v0 + 0.25 * a32 * (4.0 * c * a - b * b) * 
-               std::log(((2.0 * a + b) * a2 + 2.0 * sabc) / ba_c2);
-    }
+    return len;
 }
 
 double QuadBez::signed_area() const {
-    return (p0.x * (2.0 * p1.y + p2.y) + 2.0 * p1.x * (p2.y - p0.y)
-            - p2.x * (p0.y + 2.0 * p1.y)) * (1.0 / 6.0);
+    // Approximate by flattening
+    double area = 0.0;
+    const int N = 20;
+    Point prev = p0;
+    for (int i = 1; i <= N; ++i) {
+        double t = double(i) / N;
+        Point curr = eval(t);
+        area += (prev.x * curr.y - curr.x * prev.y) * 0.5;
+        prev = curr;
+    }
+    return area;
 }
 
 Nearest QuadBez::nearest(const Point& p, double accuracy) const {
@@ -241,6 +247,10 @@ bool QuadBez::is_linear() const {
 std::ostream& operator<<(std::ostream& os, const QuadBez& quad) {
     os << "QuadBez(" << quad.p0 << ", " << quad.p1 << ", " << quad.p2 << ")";
     return os;
+}
+
+bool operator==(const QuadBez& a, const QuadBez& b) {
+    return a.p0 == b.p0 && a.p1 == b.p1 && a.p2 == b.p2;
 }
 
 } // namespace kurbo 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "point.hpp"
+#include <optional>
+#include <iostream>
 
 namespace kurbo {
 
@@ -13,7 +15,7 @@ enum class PathElType {
     ClosePath
 };
 
-/// A path element
+/// Path element - represents a single command in a Bezier path
 class PathEl {
 public:
     PathElType type;
@@ -21,20 +23,30 @@ public:
     Point point2;  // For QuadTo and CurveTo
     Point point3;  // For CurveTo
 
-    /// Constructor for MoveTo and LineTo
+    // Constructors
     PathEl(PathElType type, const Point& point);
-    
-    /// Constructor for QuadTo
     PathEl(PathElType type, const Point& point, const Point& point2);
-    
-    /// Constructor for CurveTo
     PathEl(PathElType type, const Point& point, const Point& point2, const Point& point3);
-    
-    /// Constructor for ClosePath
     PathEl(PathElType type);
+    PathEl() : type(PathElType::ClosePath), point(), point2(), point3() {} // Default constructor
+
+    /// Copy constructor
+    PathEl(const PathEl& other) = default;
+    
+    /// Assignment operator
+    PathEl& operator=(const PathEl& other) = default;
     
     /// Destructor
     ~PathEl() = default;
+    
+    /// Check if all points are finite
+    bool is_finite() const;
+    
+    /// Check if any point is NaN
+    bool is_nan() const;
+    
+    /// Get the end point of this path element, if it exists
+    std::optional<Point> end_point() const;
 };
 
 // Stream operator

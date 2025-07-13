@@ -53,7 +53,7 @@ TEST_F(CubicBezTest, NewCurve) {
 }
 
 TEST_F(CubicBezTest, Subdivide) {
-    auto [left, right] = cubic.subdivide();
+    auto [left, right] = cubic.subdivide_concrete();
     
     // Check that subdivision produces valid curves
     EXPECT_EQ(left.p0, cubic.p0);
@@ -220,4 +220,54 @@ TEST(QuadSplineTest, FourPointsImplicitOnCurve) {
     EXPECT_EQ(quad2.p2, p3);
     ++it;
     EXPECT_EQ(it, spline.end());
+} 
+
+// --- Rust-inspired tests for CubicBez ---
+
+TEST(CubicBezRust, ArcLength) {
+    CubicBez c(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    double len = c.arclen(1e-6);
+    EXPECT_GT(len, 0.0);
+    EXPECT_NEAR(len, 4.436, 0.01); // Rust: approx 4.436
+}
+
+TEST(CubicBezRust, SignedArea) {
+    CubicBez c(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    double area = c.signed_area();
+    EXPECT_NEAR(area, 4.0, 0.1); // Rust: approx 4.0
+}
+
+TEST(CubicBezRust, SubdivideAndJoin) {
+    CubicBez c(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    auto [left, right] = c.subdivide_concrete();
+    EXPECT_EQ(left.p0, c.p0);
+    EXPECT_EQ(right.p3, c.p3);
+    EXPECT_EQ(left.p3, right.p0);
+}
+
+TEST(CubicBezRust, LinearCurve) {
+    CubicBez c(Point(0, 0), Point(1, 1), Point(2, 2), Point(3, 3));
+    EXPECT_TRUE(c.is_finite());
+    EXPECT_FALSE(c.is_nan());
+    EXPECT_EQ(c.p0, Point(0, 0));
+    EXPECT_EQ(c.p3, Point(3, 3));
+    EXPECT_NEAR(c.arclen(1e-6), std::sqrt(18), 0.01);
+}
+
+TEST(CubicBezRust, AffineTransform) {
+    CubicBez c(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    Affine scale = Affine::scale(2.0);
+    CubicBez c2 = scale * c;
+    EXPECT_EQ(c2.p0, Point(0, 0));
+    EXPECT_EQ(c2.p1, Point(2, 4));
+    EXPECT_EQ(c2.p2, Point(4, 4));
+    EXPECT_EQ(c2.p3, Point(6, 0));
+}
+
+TEST(CubicBezRust, Equality) {
+    CubicBez c1(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    CubicBez c2(Point(0, 0), Point(1, 2), Point(2, 2), Point(3, 0));
+    CubicBez c3(Point(0, 0), Point(1, 1), Point(2, 2), Point(3, 3));
+    EXPECT_TRUE(c1 == c2);
+    EXPECT_FALSE(c1 == c3);
 } 

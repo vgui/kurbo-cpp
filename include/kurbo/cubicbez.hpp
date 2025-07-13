@@ -19,7 +19,8 @@ namespace kurbo {
 class QuadSpline;
 
 /// A single cubic Bézier segment.
-class CubicBez {
+class CubicBez : public ParamCurve, public ParamCurveDeriv, public ParamCurveArclen, 
+                public ParamCurveArea, public ParamCurveNearest, public ParamCurveExtrema {
 public:
     // Control points
     Point p0;
@@ -40,8 +41,30 @@ public:
     // Approximation (temporarily disabled - requires QuadSpline implementation)
     // std::optional<QuadSpline> approx_spline(double accuracy) const;
 
-    // Subdivision
-    std::pair<CubicBez, CubicBez> subdivide() const;
+    // ParamCurve implementation
+    Point eval(double t) const override;
+    ParamCurve* subsegment(double start, double end) const override;
+    std::pair<ParamCurve*, ParamCurve*> subdivide() const override;
+    Point start() const override;
+    Point end() const override;
+
+    // ParamCurveDeriv implementation
+    ParamCurveDeriv* deriv() const override;
+
+    // ParamCurveArclen implementation
+    double arclen(double accuracy = 1e-9) const override;
+
+    // ParamCurveArea implementation
+    double signed_area() const override;
+
+    // ParamCurveNearest implementation
+    Nearest nearest(const Point& p, double accuracy) const override;
+
+    // ParamCurveExtrema implementation
+    std::vector<double> extrema() const override;
+
+    // Concrete subdivision methods
+    std::pair<CubicBez, CubicBez> subdivide_concrete() const;
     std::tuple<CubicBez, CubicBez, CubicBez> subdivide_3() const;
 
     // Utility methods
@@ -49,6 +72,8 @@ public:
     bool is_nan() const;
     std::vector<double> inflections() const;
     std::vector<double> tangents_to_point(const Point& p) const;
+    int winding(const Point& pt) const;
+    Rect bounding_box() const;
 
     // Operators
     CubicBez operator+(const Vec2& v) const;
@@ -65,5 +90,7 @@ CubicBez operator*(const Affine& affine, const CubicBez& cubic);
 
 // Stream operator
 std::ostream& operator<<(std::ostream& os, const CubicBez& cubic);
+
+bool operator==(const CubicBez& a, const CubicBez& b);
 
 } // namespace kurbo 

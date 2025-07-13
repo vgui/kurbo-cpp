@@ -55,11 +55,11 @@ public:
     /// Returns a cubic Bézier segment that exactly represents this quadratic.
     CubicBez raise() const;
 
-    /// Is this quadratic Bezier curve finite?
+    // Utility methods
     bool is_finite() const;
-
-    /// Is this quadratic Bezier curve NaN?
     bool is_nan() const;
+    int winding(const Point& pt) const;
+    Rect bounding_box() const;
 
     // ParamCurve implementation
     Point eval(double t) const override;
@@ -72,7 +72,7 @@ public:
     ParamCurveDeriv* deriv() const override;
 
     // ParamCurveArclen implementation
-    double arclen(double accuracy) const override;
+    double arclen(double accuracy = 1e-9) const override;
 
     // ParamCurveArea implementation
     double signed_area() const override;
@@ -107,5 +107,7 @@ QuadBez operator*(const Affine& affine, const QuadBez& quad);
 
 // Stream operator
 std::ostream& operator<<(std::ostream& os, const QuadBez& quad);
+
+bool operator==(const QuadBez& a, const QuadBez& b);
 
 } // namespace kurbo 

@@ -53,24 +53,25 @@ set_target_properties(kurbo PROPERTIES
 # Create test executable
 enable_testing()
 add_executable(kurbo_tests
-    tests/test_point.cpp
-    tests/test_vec2.cpp
-    tests/test_size.cpp
-    tests/test_common.cpp
     tests/test_affine.cpp
-    tests/test_translate_scale.cpp
+    tests/test_arc.cpp
+    tests/test_bezpath.cpp
+    tests/test_circle.cpp
+    tests/test_common.cpp
+    tests/test_cubicbez.cpp
+    tests/test_ellipse.cpp
+    tests/test_line.cpp
+    tests/test_param_curve.cpp
+    tests/test_path_el.cpp
+    tests/test_point.cpp
+    tests/test_quadbez.cpp
     tests/test_rect.cpp
     tests/test_rounded_rect.cpp
     tests/test_rounded_rect_radii.cpp
-    tests/test_line.cpp
-    tests/test_circle.cpp
-    tests/test_ellipse.cpp
+    tests/test_size.cpp
+    tests/test_translate_scale.cpp
     tests/test_triangle.cpp
-    tests/test_param_curve.cpp
-    tests/test_quadbez.cpp
-    tests/test_path_el.cpp
-    tests/test_cubicbez.cpp
-    tests/test_arc.cpp
+    tests/test_vec2.cpp
 )
 
 target_link_libraries(kurbo_tests
@@ -171,6 +172,10 @@ target_link_libraries(example_path_el kurbo)
 # Example: CubicBez operations
 add_executable(example_cubicbez examples/cubicbez_example.cpp)
 target_link_libraries(example_cubicbez kurbo)
+
+# Example: BezPath operations
+add_executable(example_bezpath examples/bezpath_example.cpp)
+target_link_libraries(example_bezpath kurbo)
 
 # Install rules
 install(TARGETS kurbo

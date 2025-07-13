@@ -40,6 +40,8 @@ public:
     // Utility methods
     bool is_finite() const;
     bool is_nan() const;
+    int winding(const Point& pt) const;
+    Rect bounding_box() const;
 
     // ParamCurve implementation
     Point eval(double t) const override;
@@ -81,6 +83,8 @@ public:
 
 // Stream operator
 std::ostream& operator<<(std::ostream& os, const Line& line);
+
+bool operator==(const Line& a, const Line& b);
 
 // A trivial "curve" that is just a constant point
 class ConstPoint {

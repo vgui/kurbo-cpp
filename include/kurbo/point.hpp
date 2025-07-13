@@ -38,9 +38,6 @@ public:
     /// Default constructor creates point at origin
     constexpr Point() : x(0.0), y(0.0) {}
 
-    /// Convert this point into a Vec2.
-    constexpr Vec2 to_vec2() const;
-
     /// Linearly interpolate between two points.
     Point lerp(const Point& other, double t) const;
 
@@ -74,6 +71,9 @@ public:
     /// Is this point NaN?
     bool is_nan() const;
 
+    /// Convert this point into a Vec2.
+    constexpr Vec2 to_vec2() const;
+
     // Operators
     Point operator+(const Vec2& other) const;
     Point& operator+=(const Vec2& other);
@@ -99,8 +99,6 @@ public:
     // Default
     static Point zero();
 };
-
-
 
 // Global conversion functions
 Point from_tuple(const std::tuple<double, double>& v);

@@ -99,6 +99,12 @@ public:
 
     // Default
     static Rect zero();
+
+    // Static methods
+    static Rect invalid() { return Rect(std::numeric_limits<double>::quiet_NaN(), 
+                                       std::numeric_limits<double>::quiet_NaN(),
+                                       std::numeric_limits<double>::quiet_NaN(),
+                                       std::numeric_limits<double>::quiet_NaN()); }
 };
 
 // Stream operator

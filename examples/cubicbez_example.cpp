@@ -45,7 +45,7 @@ int main() {
     
     // Subdivision
     std::cout << "\n--- Subdivision ---" << std::endl;
-    auto [left1, right1] = cubic1.subdivide();
+    auto [left1, right1] = cubic1.subdivide_concrete();
     std::cout << "Left half: start=" << left1.p0 << ", end=" << left1.p3 << std::endl;
     std::cout << "Right half: start=" << right1.p0 << ", end=" << right1.p3 << std::endl;
     

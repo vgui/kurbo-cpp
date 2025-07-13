@@ -37,6 +37,51 @@ std::ostream& operator<<(std::ostream& os, const PathEl& el) {
     return os;
 }
 
+bool PathEl::is_finite() const {
+    switch (type) {
+        case PathElType::MoveTo:
+        case PathElType::LineTo:
+            return point.is_finite();
+        case PathElType::QuadTo:
+            return point.is_finite() && point2.is_finite();
+        case PathElType::CurveTo:
+            return point.is_finite() && point2.is_finite() && point3.is_finite();
+        case PathElType::ClosePath:
+            return true;
+    }
+    return false;
+}
+
+bool PathEl::is_nan() const {
+    switch (type) {
+        case PathElType::MoveTo:
+        case PathElType::LineTo:
+            return point.is_nan();
+        case PathElType::QuadTo:
+            return point.is_nan() || point2.is_nan();
+        case PathElType::CurveTo:
+            return point.is_nan() || point2.is_nan() || point3.is_nan();
+        case PathElType::ClosePath:
+            return false;
+    }
+    return false;
+}
+
+std::optional<Point> PathEl::end_point() const {
+    switch (type) {
+        case PathElType::MoveTo:
+        case PathElType::LineTo:
+            return point;
+        case PathElType::QuadTo:
+            return point2;
+        case PathElType::CurveTo:
+            return point3;
+        case PathElType::ClosePath:
+            return std::nullopt;
+    }
+    return std::nullopt;
+}
+
 PathEl operator*(const Affine& affine, const PathEl& el) {
     switch (el.type) {
         case PathElType::MoveTo:
