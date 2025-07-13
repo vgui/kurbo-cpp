@@ -95,6 +95,9 @@ public:
     std::tuple<double, double> to_tuple() const {
         return std::make_tuple(x, y);
     }
+
+    // Default
+    static Point zero();
 };
 
 

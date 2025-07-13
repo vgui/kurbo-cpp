@@ -22,6 +22,12 @@ set(KURBO_SOURCES
     src/kurbo/rect.cpp
     src/kurbo/rounded_rect.cpp
     src/kurbo/rounded_rect_radii.cpp
+    src/kurbo/line.cpp
+    src/kurbo/circle.cpp
+    src/kurbo/ellipse.cpp
+    src/kurbo/triangle.cpp
+    src/kurbo/affine.cpp
+    src/kurbo/translate_scale.cpp
 )
 
 add_library(kurbo STATIC ${KURBO_SOURCES})
@@ -44,6 +50,15 @@ add_executable(kurbo_tests
     tests/test_vec2.cpp
     tests/test_size.cpp
     tests/test_common.cpp
+    tests/test_affine.cpp
+    tests/test_translate_scale.cpp
+    tests/test_rect.cpp
+    tests/test_rounded_rect.cpp
+    tests/test_rounded_rect_radii.cpp
+    tests/test_line.cpp
+    tests/test_circle.cpp
+    tests/test_ellipse.cpp
+    tests/test_triangle.cpp
 )
 
 target_link_libraries(kurbo_tests
@@ -57,6 +72,15 @@ add_test(NAME PointTests COMMAND kurbo_tests --gtest_filter=PointTest*)
 add_test(NAME Vec2Tests COMMAND kurbo_tests --gtest_filter=Vec2Test*)
 add_test(NAME SizeTests COMMAND kurbo_tests --gtest_filter=SizeTest*)
 add_test(NAME CommonTests COMMAND kurbo_tests --gtest_filter=CommonTest*)
+add_test(NAME AffineTests COMMAND kurbo_tests --gtest_filter=AffineTest*)
+add_test(NAME TranslateScaleTests COMMAND kurbo_tests --gtest_filter=TranslateScaleTest*)
+add_test(NAME RectTests COMMAND kurbo_tests --gtest_filter=RectTest*)
+add_test(NAME RoundedRectTests COMMAND kurbo_tests --gtest_filter=RoundedRectTest*)
+add_test(NAME RoundedRectRadiiTests COMMAND kurbo_tests --gtest_filter=RoundedRectRadiiTest*)
+add_test(NAME LineTests COMMAND kurbo_tests --gtest_filter=LineTest*)
+add_test(NAME CircleTests COMMAND kurbo_tests --gtest_filter=CircleTest*)
+add_test(NAME EllipseTests COMMAND kurbo_tests --gtest_filter=EllipseTest*)
+add_test(NAME TriangleTests COMMAND kurbo_tests --gtest_filter=TriangleTest*)
 
 # Create examples directory if it doesn't exist
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
@@ -78,6 +102,26 @@ target_link_libraries(example_size kurbo)
 # Example: Common operations
 add_executable(example_common examples/common.cpp)
 target_link_libraries(example_common kurbo)
+
+# Example: Line operations
+add_executable(example_line examples/line_example.cpp)
+target_link_libraries(example_line kurbo)
+
+# Example: Circle operations
+add_executable(example_circle examples/circle_example.cpp)
+target_link_libraries(example_circle kurbo)
+
+# Example: Triangle operations
+add_executable(example_triangle examples/triangle_example.cpp)
+target_link_libraries(example_triangle kurbo)
+
+# Example: Ellipse operations
+add_executable(example_ellipse examples/ellipse_example.cpp)
+target_link_libraries(example_ellipse kurbo)
+
+# Example: Ellipse debug
+add_executable(example_ellipse_debug examples/ellipse_debug.cpp)
+target_link_libraries(example_ellipse_debug kurbo)
 
 # Install rules
 install(TARGETS kurbo

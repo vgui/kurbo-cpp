@@ -11,8 +11,6 @@ namespace kurbo {
 const Point Point::ZERO = Point(0.0, 0.0);
 const Point Point::ORIGIN = Point(0.0, 0.0);
 
-
-
 Point Point::lerp(const Point& other, double t) const {
     return to_vec2().lerp(other.to_vec2(), t).to_point();
 }
@@ -55,6 +53,10 @@ bool Point::is_finite() const {
 
 bool Point::is_nan() const {
     return std::isnan(x) || std::isnan(y);
+}
+
+Point Point::zero() {
+    return Point(0.0, 0.0);
 }
 
 // Operators

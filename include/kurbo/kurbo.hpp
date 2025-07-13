@@ -13,13 +13,13 @@
 #include "common.hpp"
 
 // Geometric primitives
-// #include "line.hpp"
-// #include "rect.hpp"
-// #include "circle.hpp"
-// #include "ellipse.hpp"
-// #include "triangle.hpp"
-// #include "rounded_rect.hpp"
-// #include "rounded_rect_radii.hpp"
+#include "line.hpp"
+#include "rect.hpp"
+#include "circle.hpp"
+#include "ellipse.hpp"
+#include "triangle.hpp"
+#include "rounded_rect.hpp"
+#include "rounded_rect_radii.hpp"
 
 // Curves and paths
 // #include "cubicbez.hpp"
@@ -29,8 +29,8 @@
 // #include "bezpath.hpp"
 
 // Transformations
-// #include "affine.hpp"
-// #include "translate_scale.hpp"
+#include "affine.hpp"
+#include "translate_scale.hpp"
 
 // Advanced operations
 // #include "param_curve.hpp"
