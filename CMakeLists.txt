@@ -28,6 +28,7 @@ set(KURBO_SOURCES
     src/kurbo/triangle.cpp
     src/kurbo/affine.cpp
     src/kurbo/translate_scale.cpp
+    src/kurbo/param_curve.cpp
 )
 
 add_library(kurbo STATIC ${KURBO_SOURCES})
@@ -59,6 +60,7 @@ add_executable(kurbo_tests
     tests/test_circle.cpp
     tests/test_ellipse.cpp
     tests/test_triangle.cpp
+    tests/test_param_curve.cpp
 )
 
 target_link_libraries(kurbo_tests
@@ -81,6 +83,7 @@ add_test(NAME LineTests COMMAND kurbo_tests --gtest_filter=LineTest*)
 add_test(NAME CircleTests COMMAND kurbo_tests --gtest_filter=CircleTest*)
 add_test(NAME EllipseTests COMMAND kurbo_tests --gtest_filter=EllipseTest*)
 add_test(NAME TriangleTests COMMAND kurbo_tests --gtest_filter=TriangleTest*)
+add_test(NAME ParamCurveTests COMMAND kurbo_tests --gtest_filter=ParamCurveTest*)
 
 # Create examples directory if it doesn't exist
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)

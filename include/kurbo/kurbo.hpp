@@ -33,7 +33,7 @@
 #include "translate_scale.hpp"
 
 // Advanced operations
-// #include "param_curve.hpp"
+#include "param_curve.hpp"
 // #include "shape.hpp"
 // #include "offset.hpp"
 // #include "simplify.hpp"
