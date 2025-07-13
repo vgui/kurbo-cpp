@@ -23,7 +23,8 @@ public:
     Affine inner;
 
     // Constructors
-    constexpr Ellipse();
+    Ellipse();
+    Ellipse(const Point& center, const Vec2& radii, double rotation);
     constexpr Ellipse(const Affine& inner);
 
     // Static constructors
@@ -61,6 +62,7 @@ public:
     Ellipse& operator-=(const Vec2& v);
     Ellipse operator*(const Affine& affine) const;
     Ellipse& operator*=(const Affine& affine);
+    friend Ellipse operator*(const Affine& affine, const Ellipse& ellipse);
 
     // Default
     static Ellipse zero();

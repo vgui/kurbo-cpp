@@ -4,8 +4,10 @@
 
 namespace kurbo {
 
-constexpr Ellipse::Ellipse() : inner() {}
+Ellipse::Ellipse() : inner() {}
 constexpr Ellipse::Ellipse(const Affine& inner) : inner(inner) {}
+Ellipse::Ellipse(const Point& center, const Vec2& radii, double rotation)
+    : inner(Affine::translate(center.to_vec2()) * Affine::rotate(rotation) * Affine::scale_non_uniform(radii.x, radii.y)) {}
 
 Ellipse Ellipse::new_ellipse(const Point& center, const Vec2& radii, double x_rotation) {
     return private_new(center.to_vec2(), radii.x, radii.y, x_rotation);
@@ -151,6 +153,10 @@ Ellipse Ellipse::operator*(const Affine& affine) const {
 Ellipse& Ellipse::operator*=(const Affine& affine) {
     inner = affine * inner;
     return *this;
+}
+
+Ellipse operator*(const Affine& affine, const Ellipse& ellipse) {
+    return Ellipse(affine * ellipse.inner);
 }
 
 Ellipse Ellipse::zero() {

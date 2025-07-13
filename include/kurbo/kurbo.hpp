@@ -17,6 +17,7 @@
 #include "rect.hpp"
 #include "circle.hpp"
 #include "ellipse.hpp"
+#include "arc.hpp"
 #include "triangle.hpp"
 #include "rounded_rect.hpp"
 #include "rounded_rect_radii.hpp"
@@ -26,7 +27,7 @@
 #include "quadbez.hpp"
 #include "quadspline.hpp"
 #include "path_el.hpp"
-// #include "arc.hpp"
+#include "bezpath.hpp"
 // #include "bezpath.hpp"
 
 // Transformations

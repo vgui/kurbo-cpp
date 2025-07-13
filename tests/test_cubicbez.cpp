@@ -4,6 +4,7 @@
 #include "kurbo/vec2.hpp"
 #include "kurbo/affine.hpp"
 #include "kurbo/quadspline.hpp"
+#include "kurbo/arc.hpp"
 
 using namespace kurbo;
 

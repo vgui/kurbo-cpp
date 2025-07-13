@@ -25,12 +25,14 @@ set(KURBO_SOURCES
     src/kurbo/line.cpp
     src/kurbo/circle.cpp
     src/kurbo/ellipse.cpp
+    src/kurbo/arc.cpp
     src/kurbo/triangle.cpp
     src/kurbo/affine.cpp
     src/kurbo/cubicbez.cpp
     src/kurbo/translate_scale.cpp
     src/kurbo/param_curve.cpp
     src/kurbo/path_el.cpp
+    src/kurbo/bezpath.cpp
     src/kurbo/quadbez.cpp
     src/kurbo/quadspline.cpp
 )
@@ -68,6 +70,7 @@ add_executable(kurbo_tests
     tests/test_quadbez.cpp
     tests/test_path_el.cpp
     tests/test_cubicbez.cpp
+    tests/test_arc.cpp
 )
 
 target_link_libraries(kurbo_tests
@@ -94,6 +97,7 @@ add_test(NAME ParamCurveTests COMMAND kurbo_tests --gtest_filter=ParamCurveTest*
 add_test(NAME QuadBezTests COMMAND kurbo_tests --gtest_filter=QuadBezTest*)
 add_test(NAME PathElTests COMMAND kurbo_tests --gtest_filter=PathElTest*)
 add_test(NAME CubicBezTests COMMAND kurbo_tests --gtest_filter=CubicBezTest*)
+add_test(NAME ArcTests COMMAND kurbo_tests --gtest_filter=ArcTest*)
 
 # Create examples directory if it doesn't exist
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)

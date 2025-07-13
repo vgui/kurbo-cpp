@@ -1,4 +1,5 @@
 #include "kurbo/path_el.hpp"
+#include "kurbo/affine.hpp"
 
 namespace kurbo {
 
@@ -34,6 +35,21 @@ std::ostream& operator<<(std::ostream& os, const PathEl& el) {
             break;
     }
     return os;
+}
+
+PathEl operator*(const Affine& affine, const PathEl& el) {
+    switch (el.type) {
+        case PathElType::MoveTo:
+        case PathElType::LineTo:
+            return PathEl(el.type, affine * el.point);
+        case PathElType::QuadTo:
+            return PathEl(el.type, affine * el.point, affine * el.point2);
+        case PathElType::CurveTo:
+            return PathEl(el.type, affine * el.point, affine * el.point2, affine * el.point3);
+        case PathElType::ClosePath:
+            return PathEl(el.type);
+    }
+    return PathEl(el.type); // fallback, should not reach
 }
 
 } // namespace kurbo 

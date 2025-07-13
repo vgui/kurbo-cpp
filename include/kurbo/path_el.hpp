@@ -40,4 +40,7 @@ public:
 // Stream operator
 std::ostream& operator<<(std::ostream& os, const PathEl& el);
 
+class Affine;
+PathEl operator*(const Affine& affine, const PathEl& el);
+
 } // namespace kurbo 
