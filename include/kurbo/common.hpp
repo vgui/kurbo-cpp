@@ -73,14 +73,14 @@ extern const std::array<std::pair<double, double>, 5> GAUSS_LEGENDRE_COEFFS_5;
 extern const std::array<std::pair<double, double>, 6> GAUSS_LEGENDRE_COEFFS_6;
 extern const std::array<std::pair<double, double>, 7> GAUSS_LEGENDRE_COEFFS_7;
 extern const std::array<std::pair<double, double>, 8> GAUSS_LEGENDRE_COEFFS_8;
-extern const std::array<std::pair<double, double>, 8> GAUSS_LEGENDRE_COEFFS_8_HALF;
+extern const std::array<std::pair<double, double>, 4> GAUSS_LEGENDRE_COEFFS_8_HALF;
 extern const std::array<std::pair<double, double>, 9> GAUSS_LEGENDRE_COEFFS_9;
 extern const std::array<std::pair<double, double>, 11> GAUSS_LEGENDRE_COEFFS_11;
 extern const std::array<std::pair<double, double>, 16> GAUSS_LEGENDRE_COEFFS_16;
-extern const std::array<std::pair<double, double>, 16> GAUSS_LEGENDRE_COEFFS_16_HALF;
+extern const std::array<std::pair<double, double>, 8> GAUSS_LEGENDRE_COEFFS_16_HALF;
 extern const std::array<std::pair<double, double>, 24> GAUSS_LEGENDRE_COEFFS_24;
-extern const std::array<std::pair<double, double>, 24> GAUSS_LEGENDRE_COEFFS_24_HALF;
+extern const std::array<std::pair<double, double>, 12> GAUSS_LEGENDRE_COEFFS_24_HALF;
 extern const std::array<std::pair<double, double>, 32> GAUSS_LEGENDRE_COEFFS_32;
-extern const std::array<std::pair<double, double>, 32> GAUSS_LEGENDRE_COEFFS_32_HALF;
+extern const std::array<std::pair<double, double>, 16> GAUSS_LEGENDRE_COEFFS_32_HALF;
 
 } // namespace kurbo 

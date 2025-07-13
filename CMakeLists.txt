@@ -43,6 +43,7 @@ add_executable(kurbo_tests
     tests/test_point.cpp
     tests/test_vec2.cpp
     tests/test_size.cpp
+    tests/test_common.cpp
 )
 
 target_link_libraries(kurbo_tests
@@ -55,6 +56,7 @@ target_link_libraries(kurbo_tests
 add_test(NAME PointTests COMMAND kurbo_tests --gtest_filter=PointTest*)
 add_test(NAME Vec2Tests COMMAND kurbo_tests --gtest_filter=Vec2Test*)
 add_test(NAME SizeTests COMMAND kurbo_tests --gtest_filter=SizeTest*)
+add_test(NAME CommonTests COMMAND kurbo_tests --gtest_filter=CommonTest*)
 
 # Create examples directory if it doesn't exist
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
@@ -72,6 +74,10 @@ target_link_libraries(example_point_vec kurbo)
 # Example: Size operations
 add_executable(example_size examples/size.cpp)
 target_link_libraries(example_size kurbo)
+
+# Example: Common operations
+add_executable(example_common examples/common.cpp)
+target_link_libraries(example_common kurbo)
 
 # Install rules
 install(TARGETS kurbo

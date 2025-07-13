@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "kurbo/point.hpp"
 #include "kurbo/vec2.hpp"
+#include "kurbo/inline_methods.hpp"
 
 using namespace kurbo;
 
