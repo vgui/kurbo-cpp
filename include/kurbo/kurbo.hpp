@@ -22,7 +22,7 @@
 #include "rounded_rect_radii.hpp"
 
 // Curves and paths
-// #include "cubicbez.hpp"
+#include "cubicbez.hpp"
 #include "quadbez.hpp"
 #include "path_el.hpp"
 // #include "quadspline.hpp"

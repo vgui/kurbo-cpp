@@ -1,18 +1,11 @@
 #include "kurbo/quadbez.hpp"
+#include "kurbo/cubicbez.hpp"
 #include "kurbo/common.hpp"
 #include "kurbo/inline_methods.hpp"
 #include <cmath>
 #include <algorithm>
 
 namespace kurbo {
-
-// Forward declaration - will be implemented later
-class CubicBez {
-public:
-    CubicBez(const Point& p0, const Point& p1, const Point& p2, const Point& p3) 
-        : p0(p0), p1(p1), p2(p2), p3(p3) {}
-    Point p0, p1, p2, p3;
-};
 
 QuadBez::QuadBez(const Point& p0, const Point& p1, const Point& p2) 
     : p0(p0), p1(p1), p2(p2) {}
