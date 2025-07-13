@@ -3,6 +3,7 @@
 #include "kurbo/point.hpp"
 #include "kurbo/vec2.hpp"
 #include "kurbo/affine.hpp"
+#include "kurbo/quadspline.hpp"
 
 using namespace kurbo;
 
@@ -164,3 +165,58 @@ TEST_F(CubicBezTest, ToQuads) {
 //     // Simplified implementation returns nullopt
 //     EXPECT_FALSE(spline.has_value());
 // } 
+
+TEST(QuadSplineTest, NoPointsNoQuads) {
+    kurbo::QuadSpline spline;
+    EXPECT_EQ(spline.size(), 0u);
+    EXPECT_EQ(spline.begin(), spline.end());
+}
+
+TEST(QuadSplineTest, OnePointNoQuads) {
+    kurbo::QuadSpline spline({kurbo::Point(1.0, 1.0)});
+    EXPECT_EQ(spline.size(), 1u);
+    EXPECT_EQ(spline.begin(), spline.end());
+}
+
+TEST(QuadSplineTest, TwoPointsNoQuads) {
+    kurbo::QuadSpline spline({kurbo::Point(1.0, 1.0), kurbo::Point(1.0, 1.0)});
+    EXPECT_EQ(spline.size(), 2u);
+    EXPECT_EQ(spline.begin(), spline.end());
+}
+
+TEST(QuadSplineTest, ThreePointsSameQuad) {
+    kurbo::Point p0(1.0, 1.0);
+    kurbo::Point p1(2.0, 2.0);
+    kurbo::Point p2(3.0, 3.0);
+    kurbo::QuadSpline spline({p0, p1, p2});
+    auto it = spline.begin();
+    ASSERT_NE(it, spline.end());
+    kurbo::QuadBez quad = *it;
+    EXPECT_EQ(quad.p0, p0);
+    EXPECT_EQ(quad.p1, p1);
+    EXPECT_EQ(quad.p2, p2);
+    ++it;
+    EXPECT_EQ(it, spline.end());
+}
+
+TEST(QuadSplineTest, FourPointsImplicitOnCurve) {
+    kurbo::Point p0(1.0, 1.0);
+    kurbo::Point p1(3.0, 3.0);
+    kurbo::Point p2(5.0, 5.0);
+    kurbo::Point p3(8.0, 8.0);
+    kurbo::QuadSpline spline({p0, p1, p2, p3});
+    auto it = spline.begin();
+    ASSERT_NE(it, spline.end());
+    kurbo::QuadBez quad1 = *it;
+    EXPECT_EQ(quad1.p0, p0);
+    EXPECT_EQ(quad1.p1, p1);
+    EXPECT_EQ(quad1.p2, p1.midpoint(p2));
+    ++it;
+    ASSERT_NE(it, spline.end());
+    kurbo::QuadBez quad2 = *it;
+    EXPECT_EQ(quad2.p0, p1.midpoint(p2));
+    EXPECT_EQ(quad2.p1, p2);
+    EXPECT_EQ(quad2.p2, p3);
+    ++it;
+    EXPECT_EQ(it, spline.end());
+} 

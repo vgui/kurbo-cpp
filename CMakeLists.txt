@@ -32,6 +32,7 @@ set(KURBO_SOURCES
     src/kurbo/param_curve.cpp
     src/kurbo/path_el.cpp
     src/kurbo/quadbez.cpp
+    src/kurbo/quadspline.cpp
 )
 
 add_library(kurbo STATIC ${KURBO_SOURCES})

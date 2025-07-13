@@ -24,8 +24,8 @@
 // Curves and paths
 #include "cubicbez.hpp"
 #include "quadbez.hpp"
+#include "quadspline.hpp"
 #include "path_el.hpp"
-// #include "quadspline.hpp"
 // #include "arc.hpp"
 // #include "bezpath.hpp"
 
